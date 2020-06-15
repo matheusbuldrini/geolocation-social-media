@@ -80,9 +80,9 @@ def api_qr():
     im1.paste(im2.resize( (169,169) ) , (104, 10))
 
     response = serve_pil_image(im1, "H")
-    response.cache_control.max_age = 300
-    #response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    #response.headers['Pragma'] = 'no-cache'
+    #response.cache_control.max_age = 300
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
     return response
     #return serve_pil_image(im1, code)
 
