@@ -86,7 +86,7 @@ def api_qr():
     return response
     #return serve_pil_image(im1, code)
 
-@app.route("/sw.js")
+@app.route("/pwabuilder-sw.js")
 def sw():
     return send_from_directory('static', 'sw.js')
 
