@@ -1,0 +1,271 @@
+{% extends "layout.html" %}
+{% block content %}
+<nav class="btn-group w-100 fixed-bottom" role="group" aria-label="Button group with nested dropdown">
+
+    <div class="btn-group w-100" role="group">
+        <button type="button" class="btn btn-primary" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false"><i data-feather="menu"></i></button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDrop12">
+            <a class="dropdown-item" href="config">CONFIGURAÇÕES</a>
+            <a class="dropdown-item" href="sair">SAIR</a>
+        </div>
+        <button class="btn btn-primary w-100">
+            CONFISSÕES
+        </button>
+
+        <button id="toggle-message" type="button" class="btn btn-primary pending-msg"><i
+                data-feather="message-square"></i></button>
+
+    </div>
+</nav>
+
+
+
+<main role="main" class="container">
+
+
+
+
+    <div class="row">
+
+
+        <div class="col-md-4 order-md-2 pb-3">
+            <div class="sticky-top side-col">
+
+
+
+
+                <div class="card bg-secondary side-card-1">
+                    <button class="btn btn-primary purple-hover w-100" role="button" id="title_trending">
+                        TOP BRASIL
+                        &raquo;</button>
+
+                    <div class="list-group Scrollable" id="trending_list">
+                        {% for i in range(3) %}
+                        <a href="#" class="list-group-item list-group-item-action"> {{ i }} Dapibus ac faci</a>
+                        {% endfor %}
+                    </div>
+                    <button class="btn btn-sm btn-primary purple-hover w-100" role="button" id="btn_trending">Ver
+                        mais</button>
+                    <button class="btn btn-sm btn-primary purple-hover w-100" role="button" id="btn_trending_less">Ver
+                        menos</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-8 order-md-1">
+
+
+            <h4 class="card text-white bg-purple mb-3 px-3 py-1 p-md-3 title">Histórias</h4>
+
+            <div id="main_posts">
+                {% for i in range(10) %}
+                <button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break"
+                    onclick="open_post( {{ i }});">Primeiros 10 {{i}}</button>
+                {% endfor %}
+                <div class="jumbotron p-3 mb-3 sticky-top clearfix">
+                    <p class="lead float-left">Cadastre-se para postar suas histórias.
+                    </p>
+                    <button class="btn btn-primary purple-hover float-right" data-toggle="modal"
+                        data-target="#loginModal" role="button">Login »</button>
+                </div>
+
+            </div>
+            <!--button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break"
+                    onclick="open_post(12345);">
+                    Lorem ipsum dolor sit
+                    amet, consectetur adipiscing elit. Nam pulvinar
+                    et
+                    orci at interdum. Ut posuere feugiat eros non blandit. Morbi id facilisis risus. Proin
+                    eleifend dignissim turpis quis
+                </button-->
+
+
+
+
+
+
+            <button class="btn btn-sm btn-primary w-100" role="button" id="post_loading_btn">Carregar mais</button>
+
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<div class="pop-div-post bg-dark">
+    <button class="btn btn-primary w-100 bg-purple title fixed-top" role="button" id="close_post">
+        <div class="float-left">
+            <i data-feather="x"></i>
+        </div>
+        <h4 class="text-white title mb-0">História</h4>
+    </button>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-8 ">
+                <button class="btn btn-primary purple-hover float-right" data-toggle="modal"
+                data-target="#loginModal" role="button">Login »</button>
+                <p class=" text-white text-break pb-4 m-0">
+                    {% for i in range(100) %}
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et dapibus dui. Sed condimentum
+                    {% endfor %}
+                </p>
+            </div>
+            <div class="col-md-8">
+                <div class="sticky-top">
+                    <h4 class="card mb-3 px-3 py-1 p-md-3 title text-right ">Respostas</h4>
+                    {% for i in range(10) %}
+                    <div class="card mb-3 text-right">
+                        <div class="card-body">
+                            <p class="card-text">FIRSTTLorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                Pellentesque sit
+                                amet orci et nulla volutpat pellentesque non ut elit. Cras gravida velit quis semper
+                                tristique.</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+<div class="pop-div-msg">
+    <div id="tabs" class="dm-body bg-dark">
+        <div id="msg_list" class="msg-tab">
+            <button id="back_to_main" class="btn btn-primary w-100 msg-title" role="button">
+                <div class="float-left">
+                    <i data-feather="x" width="14" height="14"></i>
+                </div>
+                <p class="card-title m-0"> Mensagens</p>
+            </button>
+            <div class="list-group Scrollable" data-simplebar>
+
+                {% for i in range(10) %}
+                <button id="btn_chat" onclick="open_chat( {{ i }} );"
+                    class="list-group-item list-group-item-action bg-dark text-white">Elefante Verde
+                    Pintor {{ i }}
+                    <span class="badge badge-primary badge-pill float-right">1</span>
+                </button>
+                {% endfor %}
+
+                <button class="btn btn-sm btn-primary w-100" role="button">Ver mais</button>
+            </div>
+
+        </div>
+
+        <div id="msg_chat" class="msg-tab" style="display: none;">
+            <button id="back_to_list" class="btn btn-primary w-100 msg-title" role="button">
+                <div class="float-left">
+                    <i data-feather="arrow-left" width="14" height="14"></i>
+                </div>
+                <p class="card-title m-0">Elefante Verde Pintor</p>
+            </button>
+
+            <div class="msg-list Scrollable" data-simplebar>
+                <button class="btn btn-sm btn-primary w-100" role="button">Ver mais</button>
+                {% for i in range(10) %}
+                <div class="card text-white border-primary bg-dark mw-75 d-table my-1 msg-r">
+                    <div class="card-body p-1">
+                        <p class="card-text">Some quick example text to build on the card title and make up
+                            the bulk
+                            of
+                            the card's content.</p>
+                    </div>
+                </div>
+                <div class="card text-white border-primary bg-dark mw-75 d-table my-1 msg-l">
+                    <div class="card-body p-1">
+                        <p class="card-text">Some quick example text to build on the card title and make up
+                            the bulk
+                            of
+                            the card's content.</p>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="input-group msg-text">
+                <div class="input-group-prepend">
+                    <button class="input-group-text py-0 px-3 bg-primary"><i data-feather="triangle"></i></button>
+                </div>
+                <input type="text" class="form-control bg-primary text-white px-1" id="txt_msg">
+                <div class="input-group-append">
+                    <button class="input-group-text py-0 px-3 bg-primary" id='btn_send'><i
+                            data-feather="send"></i></button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="file" accept="image/*" class="hidden-file-input" id="inputFile">
+                <button type="button" class="btn btn-primary purple-hover btn-lg btn-block" id="get_qr_code">Não tenho código. É minha primeira vez aqui.</button>
+                <label class="btn btn-primary purple-hover btn-lg btn-block" for="inputFile">Já tenho um código. Vou enviar a imagem.</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    feather.replace()
+</script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+
+
+<script src="/static/js/custom.js"></script>
+
+<script>
+    if (!navigator.serviceWorker.controller) {
+        navigator.serviceWorker.register("/sw.js").then(function (reg) {
+            console.log("Service worker has been registered for scope: " + reg.scope);
+        });
+    }
+</script>
+
+<script type="text/javascript" src="/static/jsqrcode/grid.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/version.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/detector.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/formatinf.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/errorlevel.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/bitmat.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/datablock.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/bmparser.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/datamask.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/rsdecoder.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/gf256poly.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/gf256.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/decoder.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/qrcode.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/findpat.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/alignpat.js"></script>
+<script type="text/javascript" src="/static/jsqrcode/databr.js"></script>
+
+{% endblock %}

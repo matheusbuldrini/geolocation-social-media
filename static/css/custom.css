@@ -1,0 +1,191 @@
+/* Show it's not fixed to the top */
+
+@media (min-width: 768px) {
+    html {
+        overflow: hidden;
+        height: calc(100vh - 48px);
+    }
+
+    body {
+        overflow: auto;
+        height: 100%;
+        padding-bottom: 0 !important;
+    }
+}
+
+
+body {
+    /*min-height: 75rem;*/
+    background-color: #e2e2e2;
+    padding-bottom: 48px;
+}
+
+.purple-hover:hover {
+    transition: 0.8s;
+    background-color: purple !important;
+}
+
+button.purple-hover:hover {
+    transition: 0.8s;
+    background-color: purple !important;
+}
+
+.bg-purple {
+    background-color: purple !important;
+}
+
+.purple-hover:not(:disabled):not(.disabled) {
+    cursor: pointer;
+}
+
+a.custom-link,
+a.custom-link:hover {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+/*.btn-float-right {
+            float: right;
+            position: fixed;
+            bottom: 60px;
+            right: 0;
+            padding: 10px;
+        }*/
+
+button:focus {
+    outline: none;
+}
+
+@media (min-width: 768px) {
+    .side-col {
+        height: calc(100vh - 60px);
+    }
+}
+
+.side-card-1 {
+    max-height: 100%
+}
+
+/*        DM        */
+
+.mw-75 {
+    width: auto;
+    max-width: 75%;
+}
+
+.dm-body {
+    height: 100%;
+    padding-top: 48px;
+
+    position: relative;
+}
+
+.msg-r {
+    margin-right: 0.25rem;
+    margin-left: auto;
+    word-break: break-word;
+}
+
+.msg-l {
+    margin-left: 0.25rem;
+    margin-right: auto;
+    word-break: break-word;
+}
+
+.msg-title {
+    top: 0;
+    position: absolute;
+}
+
+.msg-text {
+    position: absolute;
+    bottom: 0;
+}
+
+.msg-text>input:focus,
+.msg-text>a:focus {
+    box-shadow: none;
+}
+
+.msg-tab {
+    height: 100%;
+    max-height: 100%;
+}
+
+#msg_chat {
+    padding-bottom: 48px;
+}
+
+/*scroll bar*/
+
+.Scrollable {
+    overflow: auto;
+    height: 100%;
+}
+
+
+/* pop divs*/
+
+.pop-div-msg {
+    position: fixed;
+    bottom: 48px;
+    right: 0;
+    z-index: 1400;
+    max-height: 500px;
+    max-width: 300px;
+    height: calc(100vh - 48px);
+    width: 100vw;
+    display: none;
+}
+
+.pop-div-post {
+    height: calc(100% - 48px);
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1025;
+    overflow: auto;
+    padding-top: 60px;
+    display: none;
+}
+
+@media (max-width: 575px) {
+    .pop-div-msg {
+        max-height: 100%;
+        max-width: 100%;
+        z-index: 2000;
+        bottom: 0;
+        height: 100vh;
+    }
+
+    .msg-opened {
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 767px) {
+    .trending {
+        display: none;
+    }
+}
+
+.msg-text .input-group-text:hover,
+.msg-text .input-group-text:focus {
+    background-color: #1a1a1a !important;
+}
+
+.pending-msg {
+    border-bottom: 5px solid purple;
+    padding-bottom: 7px;
+}
+
+#btn_trending_less {
+    display: none;
+}
+
+.hidden-file-input {
+    height: 0;
+    width: 0;
+    opacity: 0;
+}
