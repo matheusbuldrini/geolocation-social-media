@@ -88,7 +88,7 @@ def api_qr():
 
 @app.route("/pwabuilder-sw.js")
 def sw():
-    return send_from_directory('static', 'sw.js')
+    return send_from_directory('static', 'pwabuilder-sw.js')
 
 @app.route("/favicon.ico")
 def favicon():
