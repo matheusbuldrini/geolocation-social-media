@@ -31,8 +31,8 @@ def offline():
 
 @app.route("/api")
 def api():
-    import time
-    time.sleep(1)
+    #import time
+    #time.sleep(1)
     return {
         'post_array' : [
                         {'post_id': 28, 'text': "Lorem ipsum bla bla"},
