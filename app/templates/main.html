@@ -57,7 +57,6 @@
 
         <div class="col-md-8 order-md-1">
 
-            {% block posts %}
             <h4 class="card text-white bg-purple mb-3 px-3 py-1 p-md-3 title">Histórias</h4>
 
             <div id="main_posts">
@@ -76,7 +75,6 @@
 
 
             <button class="btn btn-sm btn-primary w-100" role="button" id="post_loading_btn">Carregar mais</button>
-            {% endblock %}
 
 
         </div>
@@ -229,7 +227,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal Login-->
 <div class="modal fade" id="loginModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -249,6 +247,28 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Publish Confirm-->
+<div class="modal fade" id="publishModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Publicar?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Local de publicação:
+          <span id="location">coordenadas</span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
+          <button type="button" class="btn btn-primary">Publicar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <button type="button" class="btn btn-primary rounded-circle btn-fab" id="open_publish"><i
         data-feather="edit-2"></i></button>

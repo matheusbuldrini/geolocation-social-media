@@ -452,7 +452,7 @@ function publishControl() {
     var indexof = getPath().indexOf('/publish')
     if (indexof === 0) {
         console.log('control abre publish');
-        open_publish();        
+        open_publish();
 
     } else {
         console.log('control fecha publish');
@@ -461,3 +461,33 @@ function publishControl() {
     }
 
 }
+
+$('#send_publish').click(function () {
+
+    if ("geolocation" in navigator) { //check geolocation available 
+        var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        };
+
+        function success(position) {
+            $("#location").html("Found your location <br />Lat : " + position.coords.latitude + " </br>Long :" + position.coords.longitude + 
+                                '<br>precisao: ' + position.coords.accuracy + ' metros<br>'+
+                                "<a target='_blank' class='btn btn-dark' href='https://www.google.com/maps/search/" + position.coords.latitude + "," + position.coords.longitude+"'>Ver no mapa</a>");
+            $('#publishModal').modal('show');
+        };
+
+        function error(err) {
+            alert('Erro ao obter localização (' + err.code + '): ' + err.message);
+        };
+
+        navigator.geolocation.getCurrentPosition(success, error, options);
+
+
+
+    } else {
+        console.log("Browser doesn't support geolocation!");
+    }
+
+});
