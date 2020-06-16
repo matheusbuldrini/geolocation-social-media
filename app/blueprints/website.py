@@ -1,35 +1,49 @@
-from flask import Flask, flash, render_template, request, abort, send_file, redirect, url_for, send_from_directory
-import os
-import json
+from flask import Blueprint, render_template, send_from_directory, send_file
 
-app = Flask(__name__)
+bp_app = Blueprint("website", __name__)
 
-app.secret_key = '3f578nd697rmnd90843mx0idjcm048xcr239048rcmiodmwxc12390xc90'
+def configure(app):
+    app.register_blueprint(bp_app)
 
-@app.route("/")
+
+@bp_app.route("/")
 def home():
     return render_template('main.html')
 
 
-@app.route("/p/<int:post_id>/")
+@bp_app.route("/p/<int:post_id>/")
 def post(post_id):
     return render_template('main.html')
 
-@app.route("/login")
+@bp_app.route("/login")
 def login():
     return render_template('main.html')
 
 
-@app.route("/sair")
+@bp_app.route("/sair")
 def sair():
     return redirect('/')
 
-@app.route("/offline.html")
+@bp_app.route("/offline.html")
 def offline():
     return render_template('offline.html')
 
+@bp_app.route("/pwabuilder-sw.js")
+def sw():
+    return send_from_directory('static', 'pwabuilder-sw.js')
 
-@app.route("/api")
+@bp_app.route("/favicon.ico")
+def favicon():
+    return send_from_directory('static', 'favicon.ico')
+
+
+
+
+
+
+#TO DO: MOVE TO API
+
+@bp_app.route("/api")
 def api():
     #import time
     #time.sleep(1)
@@ -53,6 +67,7 @@ def api():
                        ]
     }
 
+
 def serve_pil_image(pil_img, name):
     import io
     img_io = io.BytesIO()
@@ -60,7 +75,7 @@ def serve_pil_image(pil_img, name):
     img_io.seek(0)
     return send_file(img_io, mimetype='image/png', attachment_filename=str(name)+'.png' , as_attachment=True)
 
-@app.route("/api/qr")
+@bp_app.route("/api/qr")
 def api_qr():
     import segno
     import io
@@ -85,16 +100,3 @@ def api_qr():
     response.headers['Pragma'] = 'no-cache'
     return response
     #return serve_pil_image(im1, code)
-
-@app.route("/pwabuilder-sw.js")
-def sw():
-    return send_from_directory('static', 'pwabuilder-sw.js')
-
-@app.route("/favicon.ico")
-def favicon():
-    return send_from_directory('static', 'favicon.ico')
-
-if __name__ == "__main__":
-    # Bind to PORT if defined, otherwise default to 5000.
-    port = int(os.environ.get('PORT', 80))
-    app.run(host='0.0.0.0', port=port, debug=True)
