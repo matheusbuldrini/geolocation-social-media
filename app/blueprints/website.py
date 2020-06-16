@@ -19,6 +19,10 @@ def post(post_id):
 def login():
     return render_template('main.html')
 
+@bp_app.route("/publish")
+def publish():
+    return render_template('main.html')
+
 
 @bp_app.route("/sair")
 def sair():

@@ -33,8 +33,6 @@
             <div class="sticky-top side-col">
 
 
-
-
                 <div class="card bg-secondary side-card-1">
                     <button class="btn btn-primary purple-hover w-100" role="button" id="title_trending">
                         TOP BRASIL
@@ -50,19 +48,22 @@
                     <button class="btn btn-sm btn-primary purple-hover w-100" role="button" id="btn_trending_less">Ver
                         menos</button>
                 </div>
+
+
+
             </div>
         </div>
 
 
         <div class="col-md-8 order-md-1">
 
-
+            {% block posts %}
             <h4 class="card text-white bg-purple mb-3 px-3 py-1 p-md-3 title">Histórias</h4>
 
             <div id="main_posts">
-                {% for i in range(10) %}
+                {% for i in range(5) %}
                 <button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break"
-                    onclick="open_post( {{ i }});">Primeiros 10 {{i}}</button>
+                    onclick="open_post( {{ i }});">Primeiros {{i}}</button>
                 {% endfor %}
                 <div class="jumbotron p-3 mb-3 sticky-top clearfix">
                     <p class="lead float-left">Cadastre-se para postar suas histórias.
@@ -72,21 +73,10 @@
                 </div>
 
             </div>
-            <!--button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break"
-                    onclick="open_post(12345);">
-                    Lorem ipsum dolor sit
-                    amet, consectetur adipiscing elit. Nam pulvinar
-                    et
-                    orci at interdum. Ut posuere feugiat eros non blandit. Morbi id facilisis risus. Proin
-                    eleifend dignissim turpis quis
-                </button-->
-
-
-
-
 
 
             <button class="btn btn-sm btn-primary w-100" role="button" id="post_loading_btn">Carregar mais</button>
+            {% endblock %}
 
 
         </div>
@@ -108,8 +98,8 @@
 
         <div class="row">
             <div class="col-md-8 ">
-                <button class="btn btn-primary purple-hover float-right" data-toggle="modal"
-                data-target="#loginModal" role="button">Login »</button>
+                <button class="btn btn-primary purple-hover float-right" data-toggle="modal" data-target="#loginModal"
+                    role="button">Login »</button>
                 <p class=" text-white text-break pb-4 m-0">
                     {% for i in range(100) %}
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et dapibus dui. Sed condimentum
@@ -137,6 +127,34 @@
 
     </div>
 </div>
+
+<div class="pop-div-publish bg-primary">
+    <button class="btn btn-primary w-100 bg-purple title fixed-top" role="button" id="close_publish">
+        <div class="float-left">
+            <i data-feather="x"></i>
+        </div>
+        <h4 class="text-white title mb-0">Publicar</h4>
+    </button>
+    <div class="container h-100">
+
+        <div class="row h-100">
+            <div class="col-md-8 h-100 pb-3">
+
+                <textarea class="bg-primary text-white border-secondary publish-textarea p-2" id="publish_text" ></textarea>
+
+                <button type="button" class="btn btn-primary rounded-circle btn-fab fab-purple" id="send_publish"><i
+                    data-feather="check"></i></button>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+
 
 
 <div class="pop-div-msg">
@@ -223,13 +241,17 @@
             </div>
             <div class="modal-body">
                 <input type="file" accept="image/*" class="hidden-file-input" id="inputFile">
-                <button type="button" class="btn btn-primary purple-hover btn-lg btn-block" id="get_qr_code">Não tenho código. É minha primeira vez aqui.</button>
-                <label class="btn btn-primary purple-hover btn-lg btn-block" for="inputFile">Já tenho um código. Vou enviar a imagem.</label>
+                <button type="button" class="btn btn-primary purple-hover btn-lg btn-block" id="get_qr_code">Não tenho
+                    código. É minha primeira vez aqui.</button>
+                <label class="btn btn-primary purple-hover btn-lg btn-block" for="inputFile">Já tenho um código. Vou
+                    enviar a imagem.</label>
             </div>
         </div>
     </div>
 </div>
 
+<button type="button" class="btn btn-primary rounded-circle btn-fab" id="open_publish"><i
+        data-feather="edit-2"></i></button>
 
 
 
@@ -251,7 +273,7 @@
 </script-->
 
 <script type="module">
-import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
+    import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
 
 const el = document.createElement('pwa-update');
 document.body.appendChild(el);

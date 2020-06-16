@@ -150,6 +150,18 @@ button:focus {
     display: none;
 }
 
+.pop-div-publish {
+    height: calc(100% - 48px);
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1025;
+    overflow: auto;
+    padding-top: 60px;
+    display: none;
+}
+
 @media (max-width: 575px) {
     .pop-div-msg {
         max-height: 100%;
@@ -188,4 +200,32 @@ button:focus {
     height: 0;
     width: 0;
     opacity: 0;
+}
+
+.btn-fab{
+    position: fixed;
+    bottom: 60px;
+    right: 10px;
+    padding: 1rem !important;
+    z-index: 1026;
+}
+.btn-fab.fab-purple{
+    color: white;
+    background-color: purple;
+    border-bottom-color: purple;
+}
+
+.publish-textarea{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 100%;
+    width: 100%;
+    border: none;
+    resize: none;
+}
+
+.publish-textarea:focus{
+    border: none;
+    outline: none;
+    box-shadow: none;
 }

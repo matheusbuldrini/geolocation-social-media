@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify, abort
-from app.models.tables import User
+from app.models.tables import Post
 from app.ext.db import db
 
-PAGE = "/user"
+PAGE = "/post"
 
-bp_app = Blueprint("user", __name__, url_prefix='/api')
+bp_app = Blueprint("post", __name__, url_prefix='/api')
 
 #https://www.restapitutorial.com/lessons/httpmethods.html
 
@@ -13,29 +13,31 @@ def configure(app):
 
 @bp_app.route(PAGE, methods=["POST"])
 def create():
-    uid = request.form.get('uid')
-    name = request.form.get('name')
-    user = User(uid=uid, name=name)
-    db.session.add(user)
+    user_id = request.form.get('user_id')
+    text = request.form.get('text')
+    location_lat = request.form.get('location_lat')
+    location_long = request.form.get('location_long')
+    post = Post(user_id=user_id, text=text, location_lat=location_lat, location_long=location_long)
+    db.session.add(post)
     db.session.commit()
-    return (jsonify(user), 201)
+    return (jsonify(post), 201)
 
 @bp_app.route(PAGE, methods=["GET"])
 def read():
-    users = User.query.all()
-    return (jsonify(users), 200)
+    posts = Post.query.all()
+    return (jsonify(posts), 200)
 
 @bp_app.route(PAGE + "/<int:id>", methods=["GET"])
 def read_id(id):
-    user = User.query.get(id)
-    if not user:
+    post = Post.query.get(id)
+    if not post:
         abort(404)
-    return (jsonify(user), 200)
+    return (jsonify(post), 200)
 
 @bp_app.route(PAGE + "/<int:id>", methods=["PUT"])
 def update(id):
     abort(404)
-    #user = User.query.get(id)
+    #post = Post.query.get(id)
     #if not user:
     #    abort(404)
     #user.username = request.form.get('username')
@@ -44,10 +46,10 @@ def update(id):
 
 @bp_app.route(PAGE + "/<int:id>", methods=["DELETE"])
 def delete(id):
-    user = User.query.get(id)
-    if not user:
+    post = Post.query.get(id)
+    if not post:
         abort(404)
-    db.session.delete(user)
+    db.session.delete(post)
     db.session.commit()
-    return (jsonify(user), 200)
+    return (jsonify(post), 200)
    

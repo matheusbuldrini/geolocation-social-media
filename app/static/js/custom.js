@@ -7,7 +7,10 @@ var getHash = function () {
     return window.location.hash
 }
 
-function isMobile() {
+function isMobile(size) {
+    if (size == 'large') {
+        return (window.matchMedia('(max-width: 767px)').matches)
+    }
     return (window.matchMedia('(max-width: 575px)').matches)
 }
 
@@ -25,10 +28,15 @@ function getChatState() {
 }
 
 var changePath = function (_path) {
-    console.log('path changed to ' + _path)
-    if (window.location.pathname != _path) {
+
+    if (getPath() != _path) {
+        console.log('path changed to ' + _path);
         history.pushState(null, null, _path + window.location.search + window.location.hash);
     }
+}
+
+function getPath() {
+    return window.location.pathname;
 }
 
 function open_chat(user_id) {
@@ -49,15 +57,31 @@ function toggle_msg() {
 }
 
 function hide_msg() {
-    $(".pop-div-msg").slideUp("fast");
+    $(".pop-div-msg").slideUp("fast", function () {
+        if (!isMobile()) {
+            $('#open_publish').animate({
+                right: '10px'
+            }, 'fast');
+        }
+    });
     $('body').removeClass("msg-opened");
     setChatState(0);
 }
 
 function show_msg() {
-    $(".pop-div-msg").slideDown("fast");
+    if (!isMobile()) {
+        $('#open_publish').animate({
+            right: '310px'
+        }, 'fast', function () {
+            $(".pop-div-msg").slideDown("fast");
+        });
+    } else {
+        $(".pop-div-msg").slideDown("fast");
+    }
+
     $('body').addClass("msg-opened");
     setChatState(1);
+
 }
 
 
@@ -94,7 +118,7 @@ function more_trending() {
 function less_trending() {
 
     $(".trending").slideUp("fast", function () {
-        if (isMobile()) {
+        if (isMobile("large")) {
             var offset = $("#title_trending").offset();
             /*$("html,body").animate({
                 scrollTop: offset.top,
@@ -178,8 +202,9 @@ window.onpopstate = function () {
 
 
     msgControl();
-
+    publishControl();
     postControl();
+
     loginControl();
 }
 
@@ -240,9 +265,9 @@ $("#close_post").click(function () {
 });
 
 function postControl() {
-    var indexof = location.pathname.indexOf('/p/')
+    var indexof = getPath().indexOf('/p/')
     if (indexof === 0) {
-        post_id = parseInt(location.pathname.substring(indexof + 3));
+        post_id = parseInt(getPath().substring(indexof + 3));
         open_post(post_id);
     } else {
 
@@ -257,6 +282,9 @@ function msgControl() {
         if (cs == 0) {
             $(".pop-div-msg").slideUp("fast");
             $('body').removeClass("msg-opened");
+            $('#open_publish').animate({
+                right: '10px'
+            }, 'fast');
         } else if (cs == 1) {
             //show msg
             $(".pop-div-msg").slideDown("fast");
@@ -264,12 +292,15 @@ function msgControl() {
             //go to 1st screen
             $("#msg_chat").hide();
             $("#msg_list").show();
+            $('#open_publish').animate({
+                right: '310px'
+            }, 'fast');
         }
     }
 }
 
 function loginControl() {
-    var indexof = location.pathname.indexOf('/login')
+    var indexof = getPath().indexOf('/login')
     if (indexof === 0) {
         $('#loginModal').modal('show');
     } else {
@@ -278,14 +309,59 @@ function loginControl() {
 }
 
 
+function open_publish() {
+    if (!$('.pop-div-publish').is(':visible')) {
+        console.log("abrindo publish");
+        $('.pop-div-publish').fadeIn();
+        $('.pop-div-publish').addClass("opened");
+        $('body').addClass("msg-opened");
+
+        changePath('/publish');
+        $('#open_publish').animate({
+            bottom: '-60px'
+        }, 'fast');
+    }
+
+}
+
+function close_publish() {
+    if ($('.pop-div-publish').is(':visible')) {
+        console.log('fecha publish');
+        $('.pop-div-publish').fadeOut();
+        $('.pop-div-publish').removeClass("opened");
+        $('body').removeClass("msg-opened");
+        changePath('/');
+        $('#open_publish').animate({
+            bottom: '60px'
+        }, 'fast');
+    }
+}
+
+$("#close_publish").click(function () {
+    close_publish();
+});
+
+$("#open_publish").click(function () {
+    open_publish();
+});
+
+
+
+
+
 
 $(document).ready(function () {
 
+    publishControl();
+
     postControl();
+
     load_main_posts();
     loginControl();
 
+
 });
+
 
 var loading_content = false;
 
@@ -370,3 +446,18 @@ $('#loginModal').on('hide.bs.modal', function (e) {
     console.log("fechou modal");
     changePath('/');
 })
+
+function publishControl() {
+
+    var indexof = getPath().indexOf('/publish')
+    if (indexof === 0) {
+        console.log('control abre publish');
+        open_publish();        
+
+    } else {
+        console.log('control fecha publish');
+        close_publish();
+
+    }
+
+}
