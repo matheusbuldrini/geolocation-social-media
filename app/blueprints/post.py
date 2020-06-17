@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, abort
 from app.models.tables import Post
 from app.ext.db import db
+from datetime import datetime, date
 
 PAGE = "/post"
 
@@ -22,9 +23,24 @@ def create():
     db.session.commit()
     return (jsonify(post), 201)
 
+def validate_date(date_text):
+    try:
+        datetime.strptime(date_text, "%Y-%m-%d %H:%M:%S")
+        return True
+    except ValueError:
+        return False
+
 @bp_app.route(PAGE, methods=["GET"])
 def read():
-    posts = Post.query.all()
+    requested_date = request.args.get('requested_date', default = None,  type = str)
+    page = request.args.get('page', default = 1,  type = int)
+    per_page = 20
+    max_per_page = 20
+    if requested_date and validate_date(requested_date):
+        posts = Post.query.filter(Post.created_date < requested_date).order_by(Post.created_date.desc()).paginate(page=page,per_page=per_page,max_per_page=max_per_page,error_out=True).items
+    else:
+        posts = Post.query.order_by(Post.created_date.desc()).limit(10).all()
+    
     return (jsonify(posts), 200)
 
 @bp_app.route(PAGE + "/<int:id>", methods=["GET"])

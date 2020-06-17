@@ -364,18 +364,22 @@ $(document).ready(function () {
 
 
 var loading_content = false;
+var page = 1;
+var d = new Date($.now());
+date = (d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate() + " " + d.getUTCHours() + ":" + d.getUTCMinutes() + ":" + d.getUTCSeconds());
 
 function load_main_posts() {
     if (!loading_content) {
         $('#post_loading_btn').html("Carregando...");
         loading_content = true;
-        $.getJSON("/api", function (data) {
 
+        $.getJSON("/api/post?requested_date="+date+"&page=" + page, function (data) {
+            console.log(data);
             var d = $('#main_posts');
-            $.each(data.post_array, function (key, value) {
-                d.append('<button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break" onclick="open_post(' + value.post_id + ');">' + value.text + '</button>');
+            $.each(data, function (key, value) {
+                d.append('<button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break" onclick="open_post(' + value.id + ');">' + value.text + '</button>');
             });
-
+            page++;
             console.log("success");
         }).always(function () {
             console.log("always");
@@ -484,7 +488,7 @@ function coordinatesToPlace(lat, lon) {
 
 $('#send_publish').click(function () {
     $('#loc_loaded_div').hide();
-    
+
     $('#confirm_publish').html("Publicar");
     $('#confirm_publish').attr("disabled", true);
     if ("geolocation" in navigator) { //check geolocation available 
@@ -526,35 +530,35 @@ $('#confirm_publish').click(function () {
     text = $("#publish_text").val();
     location_lat = $("input#lat").val();
     location_long = $("input#lon").val();
-    
+
     console.log(text + location_lat + location_long);
 
 
     $.ajax({
-        url : "/api/post",
-        type : 'POST',
-        data : {
-            user_id : user_id,
-            text : text,
-            location_lat : location_lat,
-            location_long : location_long
-        },
-        beforeSend : function(){
-            $('#confirm_publish').attr("disabled", true);
-            $('#confirm_publish').html("Enviando...");
-        }
-   })
-   .done(function(msg){
-        //alert('enviado');
-        $('#confirm_publish').html("Enviado!");
-        setTimeout(function(){ 
-            $('#publishModal').modal('hide');
-            close_publish();
-            $("#publish_text").val('');
-        }, 1000);
+            url: "/api/post",
+            type: 'POST',
+            data: {
+                user_id: user_id,
+                text: text,
+                location_lat: location_lat,
+                location_long: location_long
+            },
+            beforeSend: function () {
+                $('#confirm_publish').attr("disabled", true);
+                $('#confirm_publish').html("Enviando...");
+            }
+        })
+        .done(function (msg) {
+            //alert('enviado');
+            $('#confirm_publish').html("Enviado!");
+            setTimeout(function () {
+                $('#publishModal').modal('hide');
+                close_publish();
+                $("#publish_text").val('');
+            }, 1000);
 
-   })
-   .fail(function(jqXHR, textStatus, msg){
-        alert(msg);
-   });
+        })
+        .fail(function (jqXHR, textStatus, msg) {
+            alert(msg);
+        });
 });

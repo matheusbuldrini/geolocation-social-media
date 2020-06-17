@@ -60,16 +60,18 @@
             <h4 class="card text-white bg-purple mb-3 px-3 py-1 p-md-3 title">Histórias</h4>
 
             <div id="main_posts">
-                {% for i in range(5) %}
-                <button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break"
-                    onclick="open_post( {{ i }});">Primeiros {{i}}</button>
-                {% endfor %}
                 <div class="jumbotron p-3 mb-3 sticky-top clearfix">
                     <p class="lead float-left">Cadastre-se para postar suas histórias.
                     </p>
                     <button class="btn btn-primary purple-hover float-right" data-toggle="modal"
                         data-target="#loginModal" role="button">Login »</button>
                 </div>
+
+                
+                <!--button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break"
+                    onclick="open_post( {{ i }});">Primeiros {{i}}</button-->
+                
+
 
             </div>
 
@@ -298,14 +300,6 @@
 
 
 <script src="/static/js/custom.js"></script>
-
-<!--script>
-    if (!navigator.serviceWorker.controller) {
-        navigator.serviceWorker.register("/sw.js").then(function (reg) {
-            console.log("Service worker has been registered for scope: " + reg.scope);
-        });
-    }
-</script-->
 
 <script type="module">
     import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
