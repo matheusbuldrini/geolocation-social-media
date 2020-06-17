@@ -462,6 +462,20 @@ function publishControl() {
 
 }
 
+function coordinatesToPlace(lat,lon){
+    url = 'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=pt';
+    $.getJSON( url, function(data) {
+        console.log( "success place" );
+        console.log( data.locality );
+        $("#location").html(data.locality + " - " + data.city);
+      }).fail(function() {
+         alert( "error" );
+        }).always(function() {
+          console.log( "always place" );
+        });
+    
+}
+
 $('#send_publish').click(function () {
 
     if ("geolocation" in navigator) { //check geolocation available 
@@ -472,9 +486,8 @@ $('#send_publish').click(function () {
         };
 
         function success(position) {
-            $("#location").html("Found your location <br />Lat : " + position.coords.latitude + " </br>Long :" + position.coords.longitude + 
-                                '<br>precisao: ' + position.coords.accuracy + ' metros<br>'+
-                                "<a target='_blank' class='btn btn-dark' href='https://www.google.com/maps/search/" + position.coords.latitude + "," + position.coords.longitude+"'>Ver no mapa</a>");
+            $("#location").html(position.coords.latitude + " " + position.coords.longitude);
+            coordinatesToPlace(position.coords.latitude , position.coords.longitude)
             $('#publishModal').modal('show');
         };
 
