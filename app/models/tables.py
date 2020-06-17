@@ -18,7 +18,7 @@ class Post(db.Model):
 class User(db.Model):
     __tablename__ = "user"
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    uid: str = db.Column(db.String, unique=True, nullable=False)
-    name: str = db.Column(db.String, nullable=False)
+    uid: str = db.Column(db.String(40), unique=True, nullable=False)
+    name: str = db.Column(db.String(40), nullable=False)
     posts: List[Post] = db.relationship('Post', backref='user', lazy=True)
 
