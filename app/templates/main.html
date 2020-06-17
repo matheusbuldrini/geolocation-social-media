@@ -138,10 +138,12 @@
         <div class="row h-100">
             <div class="col-md-8 h-100 pb-3">
 
-                <textarea class="bg-primary text-white border-secondary publish-textarea p-2" id="publish_text" ></textarea>
-
+                <textarea class="bg-primary text-white border-secondary publish-textarea p-2"
+                    id="publish_text"></textarea>
+                <input type="text" id="lat" hidden>
+                <input type="text" id="lon" hidden>
                 <button type="button" class="btn btn-primary rounded-circle btn-fab fab-purple" id="send_publish"><i
-                    data-feather="check"></i></button>
+                        data-feather="check"></i></button>
 
             </div>
 
@@ -251,24 +253,37 @@
 <!-- Modal Publish Confirm-->
 <div class="modal fade" id="publishModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Publicar?</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Publicar?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="location_spinner">
+                    Precisamos da sus loacalização para organizar as postagens. Por favor, clique em "Permitir".
+                    <div class="spinner">
+                        <div class="rect1"></div>
+                        <div class="rect2"></div>
+                        <div class="rect3"></div>
+                        <div class="rect4"></div>
+                        <div class="rect5"></div>
+                    </div>
+                </div>
+                <div id="loc_loaded_div">
+                    Seu local:
+                    <span id="location">carregando...</span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
+                <button type="button" class="btn btn-primary" disabled id="confirm_publish">Publicar</button>
+            </div>
         </div>
-        <div class="modal-body">
-          Confirme seu local:
-          <span id="location">coordenadas</span>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
-          <button type="button" class="btn btn-primary">Publicar</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
 <button type="button" class="btn btn-primary rounded-circle btn-fab" id="open_publish"><i
         data-feather="edit-2"></i></button>

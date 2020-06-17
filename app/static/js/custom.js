@@ -462,45 +462,99 @@ function publishControl() {
 
 }
 
-function coordinatesToPlace(lat,lon){
+function coordinatesToPlace(lat, lon) {
     url = 'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=pt';
-    $.getJSON( url, function(data) {
-        console.log( "success place" );
-        console.log( data.locality );
-        $("#location").html(data.locality + " - " + data.city);
-      }).fail(function() {
-         alert( "error" );
-        }).always(function() {
-          console.log( "always place" );
-        });
-    
+    $.getJSON(url, function (data) {
+
+        bairro = data.locality;
+        cidade = data.city;
+
+        console.log("success place: " + bairro + ' - ' + cidade);
+        $("#location").html(bairro + " - " + cidade);
+
+    }).fail(function () {
+        console.log('Erro ao obter bairro e cidade');
+    }).always(function () {
+        $('#location_spinner').hide();
+        $('#loc_loaded_div').show();
+        $('#confirm_publish').attr("disabled", false);
+    });
+
 }
 
 $('#send_publish').click(function () {
-
+    $('#loc_loaded_div').hide();
+    
+    $('#confirm_publish').html("Publicar");
+    $('#confirm_publish').attr("disabled", true);
     if ("geolocation" in navigator) { //check geolocation available 
-        var options = {
+        $('#publishModal').modal('show');
+        navigator.geolocation.getCurrentPosition(function success(position) {
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
+
+            $('input#lat').val(lat);
+            $('input#lon').val(lon);
+
+            console.log(lat + " " + lon);
+
+            $("#location").html(lat + " " + lon);
+
+            coordinatesToPlace(lat, lon);
+
+        }, function error(err) {
+
+            alert('Erro ao obter localização (' + err.code + '): ' + err.message);
+
+        }, {
             enableHighAccuracy: true,
             timeout: 5000,
             maximumAge: 0
-        };
-
-        function success(position) {
-            $("#location").html(position.coords.latitude + " " + position.coords.longitude);
-            coordinatesToPlace(position.coords.latitude , position.coords.longitude)
-            $('#publishModal').modal('show');
-        };
-
-        function error(err) {
-            alert('Erro ao obter localização (' + err.code + '): ' + err.message);
-        };
-
-        navigator.geolocation.getCurrentPosition(success, error, options);
+        });
 
 
 
     } else {
-        console.log("Browser doesn't support geolocation!");
+        alert("Browser doesn't support geolocation!");
+
     }
 
+});
+
+$('#confirm_publish').click(function () {
+    user_id = 1;
+    text = $("#publish_text").val();
+    location_lat = $("input#lat").val();
+    location_long = $("input#lon").val();
+    
+    console.log(text + location_lat + location_long);
+
+
+    $.ajax({
+        url : "/api/post",
+        type : 'POST',
+        data : {
+            user_id : user_id,
+            text : text,
+            location_lat : location_lat,
+            location_long : location_long
+        },
+        beforeSend : function(){
+            $('#confirm_publish').attr("disabled", true);
+            $('#confirm_publish').html("Enviando...");
+        }
+   })
+   .done(function(msg){
+        //alert('enviado');
+        $('#confirm_publish').html("Enviado!");
+        setTimeout(function(){ 
+            $('#publishModal').modal('hide');
+            close_publish();
+            $("#publish_text").val('');
+        }, 1000);
+
+   })
+   .fail(function(jqXHR, textStatus, msg){
+        alert(msg);
+   });
 });
