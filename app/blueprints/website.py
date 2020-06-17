@@ -32,16 +32,16 @@ def sair():
 def offline():
     return render_template('offline.html')
 
-@bp_app.route("/pwabuilder-sw.js")
+@bp_app.route("/service-worker.js")
 def sw():
-    return send_from_directory('static', 'pwabuilder-sw.js')
+    return send_from_directory('static', 'service-worker.js')
 
 @bp_app.route("/favicon.ico")
 def favicon():
     return send_from_directory('static', 'favicon.ico')
 
 
-
+ 
 
 
 

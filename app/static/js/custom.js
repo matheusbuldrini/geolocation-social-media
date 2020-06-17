@@ -239,11 +239,25 @@ function press_back(mobile_only = false) {
 function open_post(post_id) {
     if (!$('.pop-div-post').is(':visible')) {
         console.log("abrindo post: " + post_id);
+        $('#post_text').html('');
+        $('#spinner_post_text').show();
         $('.pop-div-post').fadeIn();
         $('.pop-div-post').addClass("opened");
         $('body').addClass("msg-opened");
-
         changePath('/p/' + post_id + '/');
+
+        $.getJSON("/api/post/"+post_id, function (data) {
+            console.log("success");
+
+            $('#post_text').html(data.text);
+            $('#spinner_post_text').hide();
+
+    
+
+
+        });
+
+
 
     }
 
@@ -365,16 +379,18 @@ $(document).ready(function () {
 
 var loading_content = false;
 var page = 1;
-var d = new Date($.now());
-date = (d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate() + " " + d.getUTCHours() + ":" + d.getUTCMinutes() + ":" + d.getUTCSeconds());
+var date = null;
 
 function load_main_posts() {
     if (!loading_content) {
         $('#post_loading_btn').html("Carregando...");
         loading_content = true;
-
-        $.getJSON("/api/post?requested_date="+date+"&page=" + page, function (data) {
-            console.log(data);
+        if (!date) {
+            var d = new Date($.now());
+            date = (d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate() + " " + d.getUTCHours() + ":" + d.getUTCMinutes() + ":" + d.getUTCSeconds());
+        }
+        $.getJSON("/api/post?requested_date=" + date + "&page=" + page, function (data) {
+            //console.log(data);
             var d = $('#main_posts');
             $.each(data, function (key, value) {
                 d.append('<button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break" onclick="open_post(' + value.id + ');">' + value.text + '</button>');
