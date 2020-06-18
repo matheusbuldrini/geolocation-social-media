@@ -453,17 +453,58 @@ function decodeImageFromBase64(data, callback) {
 
 $('#inputFile').change(readFile);
 
+function downloadBase64Png(ImageBase64){
+    var a = document.createElement("a"); //Create <a>
+    a.href = "data:image/png;base64," + ImageBase64; //Image Base64 Goes here
+    a.download = "ticket.png"; //File name Here
+    a.click(); //Downloaded file
+}
+
+function create_user(){
+    $.ajax({
+        url: "/api/user",
+        type: 'POST',
+        data: {
+            
+                },
+        beforeSend: function () {
+            $('#get_qr_code').attr("disabled", true);
+            $('#inputFile').attr("disabled", true);
+            $('#get_qr_code').html("Gerando Códgo...");
+        }
+    })
+    .done(function (data) {
+        //alert('enviado');
+        $('#get_qr_code').html("Pronto. Baixando...");
+        //console.log(data);
+        downloadBase64Png(data.ticket);
+        alert('Você será conhecido como: ' + data.user.name);
+        alert('Iniciando login para o código: ' + data.user.uid);
+        setTimeout(function () {
+            $('#loginModal').modal('hide');
+        }, 1000);
+
+    })
+    .fail(function (jqXHR, textStatus, msg) {
+        alert(msg);
+    });
+}
+
 $("#get_qr_code").click(function () {
-    window.location.href = '/api/qr';
+   create_user();
 });
 
 $('#loginModal').on('show.bs.modal', function (e) {
     console.log("abriu modal");
+    $('#get_qr_code').attr("disabled", false);
+    $('#inputFile').attr("disabled", false);
+    $('#get_qr_code').html("Não tenho código. É minha primeira vez aqui.");
     changePath('/login');
 })
 
 $('#loginModal').on('hide.bs.modal', function (e) {
     console.log("fechou modal");
+    $('#get_qr_code').html("Não tenho código. É minha primeira vez aqui.");
     changePath('/');
 })
 

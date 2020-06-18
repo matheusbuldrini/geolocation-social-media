@@ -11,14 +11,45 @@ bp_app = Blueprint("user", __name__, url_prefix='/api')
 def configure(app):
     app.register_blueprint(bp_app)
 
+
+def get_uid():
+    import uuid
+    return uuid.uuid4().hex   
+
+def get_rand_name():
+    return "nomeeee"
+
+def get_ticket_png(code):
+    import segno
+    import io
+    import base64
+    from PIL import Image
+
+    #segno
+    qr = segno.make_qr(code, error="H", version=6)
+    buff = io.BytesIO()
+    qr.save(buff, scale=5, kind='png', border=8) #, light='purple')
+    #pillow
+    im1 = Image.open('base.png')
+    im2 = Image.open(buff)
+    im1.paste(im2.resize( (169,169) ) , (104, 10))
+    #to base64
+    buff2 = io.BytesIO()
+    im1.save(buff2, format="PNG")
+    img_str = base64.b64encode(buff2.getvalue())
+    return img_str.decode()
+
 @bp_app.route(PAGE, methods=["POST"])
 def create():
-    uid = request.form.get('uid')
-    name = request.form.get('name')
+    uid = get_uid()
+    name = get_rand_name()
     user = User(uid=uid, name=name)
     db.session.add(user)
     db.session.commit()
-    return (jsonify(user), 201)
+
+    img = get_ticket_png(uid)
+
+    return (jsonify({'user': user, 'ticket': img}), 201)
 
 @bp_app.route(PAGE, methods=["GET"])
 def read():

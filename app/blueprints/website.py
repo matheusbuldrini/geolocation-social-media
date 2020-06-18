@@ -72,35 +72,39 @@ def api():
     }
 
 
-def serve_pil_image(pil_img, name):
-    import io
-    img_io = io.BytesIO()
-    pil_img.save(img_io, 'PNG')
-    img_io.seek(0)
-    return send_file(img_io, mimetype='image/png', attachment_filename=str(name)+'.png' , as_attachment=True)
+#def serve_pil_image(pil_img, name):
+#    import io
+#    img_io = io.BytesIO()
+#    pil_img.save(img_io, 'PNG')
+#    img_io.seek(0)
+#    return send_file(img_io, mimetype='image/png', attachment_filename=str(name)+'.png' , as_attachment=True)
 
-@bp_app.route("/api/qr")
-def api_qr():
-    import segno
-    import io
-    import base64
-    import uuid
-    from PIL import Image
-    #random md5
-    code = uuid.uuid4().hex
-    print(code)
-    #segno
-    qr = segno.make_qr(code, error="H", version=6)
-    buff = io.BytesIO()
-    qr.save(buff, scale=5, kind='png', border=8) #, light='purple')
-    #pillow
-    im1 = Image.open('base.png')
-    im2 = Image.open(buff)
-    im1.paste(im2.resize( (169,169) ) , (104, 10))
+#@bp_app.route("/api/qr")
+#def api_qr():
+#    import segno
+#    import io
+#    import base64
+#    import uuid
+#    from PIL import Image
+#    #random md5
+#    code = uuid.uuid4().hex
+#    #print(code)
+#    #segno
+#    qr = segno.make_qr(code, error="H", version=6)
+#    buff = io.BytesIO()
+#    qr.save(buff, scale=5, kind='png', border=8) #, light='purple')
+#    #pillow
+#    im1 = Image.open('base.png')
+#    im2 = Image.open(buff)
+#    im1.paste(im2.resize( (169,169) ) , (104, 10))
+#    #to base64
+#    buff2 = io.BytesIO()
+#    im1.save(buff2, format="PNG")
+#    img_str = base64.b64encode(buff2.getvalue())
+#    
+#    #response = serve_pil_image(im1, "H")
+#    #response.cache_control.max_age = 300
+#    #response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+#    #response.headers['Pragma'] = 'no-cache'
 
-    response = serve_pil_image(im1, "H")
-    #response.cache_control.max_age = 300
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    return response
-    #return serve_pil_image(im1, code)
+    return img_str
