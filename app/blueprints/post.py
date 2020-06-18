@@ -41,10 +41,15 @@ def validate_date(date_text):
 def read():
     requested_date = request.args.get('requested_date', default = None,  type = str)
     page = request.args.get('page', default = 1,  type = int)
+    user_lat = request.args.get('user_lat', default = None,  type = float)
+    user_long = request.args.get('user_long', default = None,  type = float)
     per_page = 20
     max_per_page = 20
-    if requested_date and validate_date(requested_date):
-        posts = Post.query.filter(Post.created_date < requested_date).order_by(Post.created_date.desc()).paginate(page=page,per_page=per_page,max_per_page=max_per_page,error_out=True).items
+    if requested_date and validate_date(requested_date) and user_lat and user_long:
+        posts = Post.query.filter(Post.created_date < requested_date)\
+                .order_by(db.func.pow((Post.location_long-(user_long)),2) + db.func.pow((Post.location_lat-(user_lat)),2),\
+                          Post.created_date.desc())\
+                .paginate(page=page,per_page=per_page,max_per_page=max_per_page,error_out=True).items
     else:
         posts = Post.query.order_by(Post.created_date.desc()).limit(10).all()
     

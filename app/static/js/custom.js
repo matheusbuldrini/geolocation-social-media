@@ -1,4 +1,6 @@
 var IS_LOGGED = false;
+var USER_LAT = null;
+var USER_LONG = null;
 
 var changeHash = function (hash) {
     history.pushState(null, null, window.location.pathname + window.location.search + hash);
@@ -379,20 +381,19 @@ $(document).ready(function () {
 
 });
 
-
 var loading_content = false;
 var page = 1;
 var date = null;
 
-function load_main_posts() {
-    if (!loading_content) {
+function load_main_posts_(){
+    if (USER_LAT && USER_LONG) {
         $('#post_loading_btn').html("Carregando...");
         loading_content = true;
         if (!date) {
             var d = new Date($.now());
             date = (d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate() + " " + d.getUTCHours() + ":" + d.getUTCMinutes() + ":" + d.getUTCSeconds());
         }
-        $.getJSON("/api/post?requested_date=" + date + "&page=" + page, function (data) {
+        $.getJSON("/api/post?requested_date=" + date + "&page=" + page + "&user_lat=" + USER_LAT + "&user_long=" + USER_LONG, function (data) {
             //console.log(data);
             var d = $('#main_posts');
             $.each(data, function (key, value) {
@@ -407,6 +408,29 @@ function load_main_posts() {
         }).fail(function () {
             //console.log("fail");
         });
+    }
+}
+
+function load_main_posts() {
+    if (!loading_content) {
+
+        if (!USER_LAT || !USER_LONG) {
+            getUserLocation(function success(lat, lon) {
+
+                USER_LAT = lat;
+                USER_LONG = lon;
+                load_main_posts_();
+
+            }, function error(msg) {
+                USER_LAT = null;
+                USER_LONG = null;
+                alert(msg);
+            });
+        } else {
+            load_main_posts_();
+        }
+
+        
     }
 }
 
@@ -583,42 +607,45 @@ function coordinatesToPlace(lat, lon) {
 
 }
 
-$('#send_publish').click(function () {
-    $('#loc_loaded_div').hide();
-
-    $('#confirm_publish').html("Publicar");
-    $('#confirm_publish').attr("disabled", true);
+function getUserLocation(callback_success, callback_error) {
     if ("geolocation" in navigator) { //check geolocation available 
-        $('#publishModal').modal('show');
         navigator.geolocation.getCurrentPosition(function success(position) {
             lat = position.coords.latitude;
             lon = position.coords.longitude;
-
-            $('input#lat').val(lat);
-            $('input#lon').val(lon);
-
-            //console.log(lat + " " + lon);
-
-            $("#location").html(lat + " " + lon);
-
-            coordinatesToPlace(lat, lon);
+            callback_success(lat, lon);
 
         }, function error(err) {
 
-            alert('Erro ao obter localização (' + err.code + '): ' + err.message);
+            callback_error('Erro ao obter localização (' + err.code + '): ' + err.message);
 
         }, {
             enableHighAccuracy: true,
             timeout: 5000,
             maximumAge: 0
         });
-
-
-
     } else {
-        alert("Browser doesn't support geolocation!");
+        callback_error("Browser doesn't support geolocation!");
 
     }
+}
+
+$('#send_publish').click(function () {
+    $('#loc_loaded_div').hide();
+
+    $('#confirm_publish').html("Publicar");
+    $('#confirm_publish').attr("disabled", true);
+    $('#publishModal').modal('show');
+
+
+    getUserLocation(function success(lat, lon) {
+        $('input#lat').val(lat);
+        $('input#lon').val(lon);
+        //console.log(lat + " " + lon);
+        $("#location").html(lat + " " + lon);
+        coordinatesToPlace(lat, lon);
+    }, function error(msg) {
+        alert(msg);
+    });
 
 });
 
@@ -664,7 +691,7 @@ $('#confirm_publish').click(function () {
         });
 });
 
-$('#btn_refresh').click(function(){
+$('#btn_refresh').click(function () {
     //window.onbeforeunload = null;
     window.location.reload();
 });
