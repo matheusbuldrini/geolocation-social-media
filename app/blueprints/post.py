@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, abort
 from app.models.tables import Post
+from app.models.tables import User
 from app.ext.db import db
 from datetime import datetime, date
 
@@ -14,14 +15,19 @@ def configure(app):
 
 @bp_app.route(PAGE, methods=["POST"])
 def create():
-    user_id = request.form.get('user_id')
-    text = request.form.get('text')
-    location_lat = request.form.get('location_lat')
-    location_long = request.form.get('location_long')
-    post = Post(user_id=user_id, text=text, location_lat=location_lat, location_long=location_long)
-    db.session.add(post)
-    db.session.commit()
-    return (jsonify(post), 201)
+    user_uid = request.form.get('user_uid')
+
+    user = User.query.filter(User.uid == user_uid).first()
+    if user:
+        user_id = user.id
+        text = request.form.get('text')
+        location_lat = request.form.get('location_lat')
+        location_long = request.form.get('location_long')
+        post = Post(user_id=user_id, text=text, location_lat=location_lat, location_long=location_long)
+        db.session.add(post)
+        db.session.commit()
+        return (jsonify(post), 201)
+    abort(404)
 
 def validate_date(date_text):
     try:

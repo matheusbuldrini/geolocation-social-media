@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, send_from_directory, send_file
+from flask import Blueprint, render_template, send_from_directory, send_file, session, request, abort, redirect
 
 bp_app = Blueprint("website", __name__)
 
@@ -15,9 +15,24 @@ def home():
 def post(post_id):
     return render_template('main.html')
 
-@bp_app.route("/login")
+# TO DO
+def validate_login(uid):
+    return True
+
+@bp_app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template('main.html')
+
+    if request.method == 'POST':
+        if session.get('uid'):
+            abort(404)
+        uid = request.form.get('uid')
+        if uid and validate_login(uid):
+            session['uid'] = uid
+            return uid
+        else:
+            abort(404)
+    else:
+        return render_template('main.html')
 
 @bp_app.route("/publish")
 def publish():
@@ -26,6 +41,8 @@ def publish():
 
 @bp_app.route("/sair")
 def sair():
+    session['uid'] = None
+    session.clear()
     return redirect('/')
 
 @bp_app.route("/offline.html")

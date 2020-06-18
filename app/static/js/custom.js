@@ -1,7 +1,10 @@
+var USER_UID = null;
+
 var changeHash = function (hash) {
     history.pushState(null, null, window.location.pathname + window.location.search + hash);
 
 }
+
 
 var getHash = function () {
     return window.location.hash
@@ -436,7 +439,8 @@ function readFile() {
         FR.addEventListener("load", function (e) {
             //imageURI = e.target.result;
             decodeImageFromBase64(e.target.result, function (decodedInformation) {
-                alert(decodedInformation);
+                alert('Logando com: ' + decodedInformation);
+                user_login(decodedInformation);
             });
         });
         FR.readAsDataURL(this.files[0]);
@@ -460,6 +464,35 @@ function downloadBase64Png(ImageBase64){
     a.click(); //Downloaded file
 }
 
+function user_login(uid){
+    $.ajax({
+        url: "/login",
+        type: 'POST',
+        data: {
+                'uid': uid
+                },
+        beforeSend: function () {
+            /*$('#get_qr_code').attr("disabled", true);
+            $('#inputFile').attr("disabled", true);
+            $('#get_qr_code').html("Gerando Códgo...");*/
+        }
+    })
+    .done(function (data) {
+        //alert('enviado');
+        USER_UID = uid;
+        $('#lbl_login_info').html(USER_UID);
+        alert('Logado: ' + uid);
+        setTimeout(function () {
+            $('#loginModal').modal('hide');
+        }, 1000);
+
+    })
+    .fail(function (jqXHR, textStatus, msg) {
+        alert(msg);
+        $('#loginModal').modal('hide');
+    });
+}
+
 function create_user(){
     $.ajax({
         url: "/api/user",
@@ -475,13 +508,14 @@ function create_user(){
     })
     .done(function (data) {
         //alert('enviado');
-        $('#get_qr_code').html("Pronto. Baixando...");
+        $('#get_qr_code').html("Pronto. Fazendo login...");
         //console.log(data);
         downloadBase64Png(data.ticket);
         alert('Você será conhecido como: ' + data.user.name);
         alert('Iniciando login para o código: ' + data.user.uid);
+        user_login(data.user.uid);
         setTimeout(function () {
-            $('#loginModal').modal('hide');
+            //$('#loginModal').modal('hide');
         }, 1000);
 
     })
@@ -583,7 +617,7 @@ $('#send_publish').click(function () {
 });
 
 $('#confirm_publish').click(function () {
-    user_id = 1;
+    user_uid = USER_UID;
     text = $("#publish_text").val();
     location_lat = $("input#lat").val();
     location_long = $("input#lon").val();
@@ -595,7 +629,7 @@ $('#confirm_publish').click(function () {
             url: "/api/post",
             type: 'POST',
             data: {
-                user_id: user_id,
+                user_uid: user_uid,
                 text: text,
                 location_lat: location_lat,
                 location_long: location_long
