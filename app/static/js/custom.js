@@ -217,7 +217,7 @@ $("#txt_msg").click(function () {
     setTimeout(function () {
         var d = $('.msg-list .simplebar-content-wrapper');
         d.scrollTop(d.prop("scrollHeight"));
-    }, 400);
+    }, 600);
 
 
 });
@@ -385,7 +385,7 @@ var loading_content = false;
 var page = 1;
 var date = null;
 
-function load_main_posts_(){
+function load_main_posts_() {
     if (USER_LAT && USER_LONG) {
         $('#post_loading_btn').html("Carregando...");
         loading_content = true;
@@ -430,7 +430,7 @@ function load_main_posts() {
             load_main_posts_();
         }
 
-        
+
     }
 }
 
@@ -490,6 +490,7 @@ function downloadBase64Png(ImageBase64) {
     var a = document.createElement("a"); //Create <a>
     a.href = "data:image/png;base64," + ImageBase64; //Image Base64 Goes here
     a.download = "ticket.png"; //File name Here
+    a.target = '_blank';
     a.click(); //Downloaded file
 }
 
@@ -512,9 +513,10 @@ function user_login(uid) {
             $('#options_menu').append('<a class="dropdown-item" href="sair">SAIR</a>');
             $('#login_popup').remove();
             //alert('Logado!');
-            setTimeout(function () {
-                $('#loginModal').modal('hide');
-            }, 1000);
+            $('#loginModal').modal('hide');
+            if($("#send_publish").is(":visible")){
+                $("#send_publish").trigger( "click" );
+            }
 
         })
         .fail(function (jqXHR, textStatus, msg) {
@@ -540,14 +542,10 @@ function create_user() {
             //alert('enviado');
             $('#get_qr_code').html("Pronto. Fazendo login...");
             //console.log(data);
+            user_login(data.user.uid);
             downloadBase64Png(data.ticket);
             //alert('Você será conhecido como: ' + data.user.name);
             //alert('Iniciando login para o código: ' + data.user.uid);
-            user_login(data.user.uid);
-            setTimeout(function () {
-                //$('#loginModal').modal('hide');
-            }, 1000);
-
         })
         .fail(function (jqXHR, textStatus, msg) {
             alert(msg);
@@ -677,17 +675,21 @@ $('#confirm_publish').click(function () {
         .done(function (msg) {
             //alert('enviado');
             $('#confirm_publish').html("Enviado!");
-            setTimeout(function () {
-                $('#publishModal').modal('hide');
-                close_publish();
-                $("#publish_text").val('');
-            }, 1000);
+
+            $('#publishModal').modal('hide');
+            close_publish();
+            $("#publish_text").val('');
 
         })
         .fail(function (jqXHR, textStatus, msg) {
-            $('#publishModal').modal('hide');
-            changePath('/login');
-            loginControl();
+            if(jqXHR.responseJSON.message == "login-error"){
+                $('#publishModal').modal('hide');
+                changePath('/login');
+                loginControl();
+            }else{
+                alert('FAIL');
+            }
+
         });
 });
 

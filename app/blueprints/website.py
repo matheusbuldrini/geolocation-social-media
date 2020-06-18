@@ -50,7 +50,7 @@ def publish():
             else:
                 abort(404)
         else:
-            return (jsonify({'success':False, 'message': 'Usuario nao logado ou uid invalido'}), 404)
+            return (jsonify({'success':False, 'message': 'login-error'}), 404)
     else:
         return render_template('main.html')
 
@@ -59,7 +59,7 @@ def publish():
 def sair():
     session['uid'] = None
     session.clear()
-    return redirect('/')
+    return render_template('main.html')
 
 @bp_app.route("/offline.html")
 def offline():
