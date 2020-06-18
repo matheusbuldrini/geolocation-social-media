@@ -1,4 +1,8 @@
-from flask import Blueprint, render_template, send_from_directory, send_file, session, request, abort, redirect
+from flask import Blueprint, render_template, send_from_directory, send_file, session, request, abort, redirect, jsonify
+import requests
+import os
+
+API_URL = os.environ['API_URL']
 
 bp_app = Blueprint("website", __name__)
 
@@ -28,15 +32,27 @@ def login():
         uid = request.form.get('uid')
         if uid and validate_login(uid):
             session['uid'] = uid
-            return uid
+            return (jsonify({'success':True}), 201)
         else:
             abort(404)
     else:
         return render_template('main.html')
 
-@bp_app.route("/publish")
+@bp_app.route("/publish", methods=["GET", "POST"])
 def publish():
-    return render_template('main.html')
+    if request.method == 'POST':
+        uid = session.get('uid')
+        if uid and validate_login(uid):
+            req = dict(request.form)
+            req['user_uid'] = uid
+            if requests.post(API_URL+"/post", data=req):
+                return (jsonify({'success':True}), 201)
+            else:
+                abort(404)
+        else:
+            return (jsonify({'success':False, 'message': 'Usuario nao logado ou uid invalido'}), 404)
+    else:
+        return render_template('main.html')
 
 
 @bp_app.route("/sair")

@@ -1,4 +1,4 @@
-var USER_UID = null;
+var IS_LOGGED = false;
 
 var changeHash = function (hash) {
     history.pushState(null, null, window.location.pathname + window.location.search + hash);
@@ -33,7 +33,7 @@ function getChatState() {
 var changePath = function (_path) {
 
     if (getPath() != _path) {
-        console.log('path changed to ' + _path);
+        //console.log('path changed to ' + _path);
         history.pushState(null, null, _path + window.location.search + window.location.hash);
     }
 }
@@ -43,7 +43,7 @@ function getPath() {
 }
 
 function open_chat(user_id) {
-    console.log("clicou em user" + user_id);
+    //console.log("clicou em user" + user_id);
     $("#msg_list").hide();
     $("#msg_chat").show();
     var d = $('.msg-list .simplebar-content-wrapper');
@@ -105,14 +105,14 @@ function more_trending() {
             d.append('<button class="list-group-item list-group-item-action trending">' + value.post_id + ' - ' + value.text + '</button>');
         });
 
-        console.log("success");
+        //console.log("success");
         trending_loaded = true;
         $(".trending").slideDown("fast");
         $('#btn_trending').hide();
         $('#btn_trending_less').show();
 
     }).always(function () {
-        console.log("always");
+        //console.log("always");
         $('#btn_trending').html("Ver mais");
     });
 }
@@ -189,7 +189,7 @@ function send_message() {
         $("#txt_msg").focus();
         return;
     }
-    console.log("sending: " + txt);
+    //console.log("sending: " + txt);
     if (true) {
         add_message_baloon(txt, "r");
         $("#txt_msg").val("");
@@ -229,11 +229,11 @@ $("#txt_msg").on('keypress', function (e) {
 function press_back(mobile_only = false) {
     if (mobile_only) {
         if (isMobile()) {
-            console.log('going back');
+            //console.log('going back');
             window.history.back();
         }
     } else {
-        console.log('going back not mobile');
+        //console.log('going back not mobile');
         window.history.back();
     }
 
@@ -241,7 +241,7 @@ function press_back(mobile_only = false) {
 
 function open_post(post_id) {
     if (!$('.pop-div-post').is(':visible')) {
-        console.log("abrindo post: " + post_id);
+        //console.log("abrindo post: " + post_id);
         $('#post_text').html('');
         $('#spinner_post_text').show();
         $('.pop-div-post').fadeIn();
@@ -249,13 +249,13 @@ function open_post(post_id) {
         $('body').addClass("msg-opened");
         changePath('/p/' + post_id + '/');
 
-        $.getJSON("/api/post/"+post_id, function (data) {
-            console.log("success");
+        $.getJSON("/api/post/" + post_id, function (data) {
+            //console.log("success");
 
             $('#post_text').html(data.text);
             $('#spinner_post_text').hide();
 
-    
+
 
 
         });
@@ -268,7 +268,7 @@ function open_post(post_id) {
 
 function close_post() {
     if ($('.pop-div-post').is(':visible')) {
-        console.log('fecha post');
+        //console.log('fecha post');
         $('.pop-div-post').fadeOut();
         $('.pop-div-post').removeClass("opened");
         $('body').removeClass("msg-opened");
@@ -295,7 +295,7 @@ function postControl() {
 function msgControl() {
     if (isMobile()) {
         cs = getHash().substring(1);
-        console.log(cs);
+        //console.log(cs);
         if (cs == 0) {
             $(".pop-div-msg").slideUp("fast");
             $('body').removeClass("msg-opened");
@@ -328,7 +328,7 @@ function loginControl() {
 
 function open_publish() {
     if (!$('.pop-div-publish').is(':visible')) {
-        console.log("abrindo publish");
+        //console.log("abrindo publish");
         $('.pop-div-publish').fadeIn();
         $('.pop-div-publish').addClass("opened");
         $('body').addClass("msg-opened");
@@ -343,7 +343,7 @@ function open_publish() {
 
 function close_publish() {
     if ($('.pop-div-publish').is(':visible')) {
-        console.log('fecha publish');
+        //console.log('fecha publish');
         $('.pop-div-publish').fadeOut();
         $('.pop-div-publish').removeClass("opened");
         $('body').removeClass("msg-opened");
@@ -399,13 +399,13 @@ function load_main_posts() {
                 d.append('<button class="list-group-item list-group-item-action bg-dark text-white purple-hover mb-3 text-break" onclick="open_post(' + value.id + ');">' + value.text + '</button>');
             });
             page++;
-            console.log("success");
+            //console.log("success");
         }).always(function () {
-            console.log("always");
+            //console.log("always");
             $('#post_loading_btn').html("Carregar mais");
             loading_content = false;
         }).fail(function () {
-            console.log("fail");
+            //console.log("fail");
         });
     }
 }
@@ -415,7 +415,7 @@ $("#post_loading_btn").click(function () {
 });
 
 function infScrollControl(element) {
-    console.log("scrolling...");
+    //console.log("scrolling...");
     if ($(element).scrollTop() > $(document).height() - 4 * $(window).height()) {
         load_main_posts();
     }
@@ -433,14 +433,19 @@ $('body').scroll(function () {
 
 function readFile() {
     if (this.files && this.files[0]) {
-        console.log(this.files[0]);
+        //console.log(this.files[0]);
         var FR = new FileReader();
 
         FR.addEventListener("load", function (e) {
             //imageURI = e.target.result;
             decodeImageFromBase64(e.target.result, function (decodedInformation) {
-                alert('Logando com: ' + decodedInformation);
-                user_login(decodedInformation);
+                if (decodedInformation != "error decoding QR Code") {
+                    //alert('Logando com: ' + decodedInformation);
+                    user_login(decodedInformation);
+                } else {
+                    alert('error decoding');
+                }
+
             });
         });
         FR.readAsDataURL(this.files[0]);
@@ -457,79 +462,80 @@ function decodeImageFromBase64(data, callback) {
 
 $('#inputFile').change(readFile);
 
-function downloadBase64Png(ImageBase64){
+function downloadBase64Png(ImageBase64) {
     var a = document.createElement("a"); //Create <a>
     a.href = "data:image/png;base64," + ImageBase64; //Image Base64 Goes here
     a.download = "ticket.png"; //File name Here
     a.click(); //Downloaded file
 }
 
-function user_login(uid){
+function user_login(uid) {
     $.ajax({
-        url: "/login",
-        type: 'POST',
-        data: {
+            url: "/login",
+            type: 'POST',
+            data: {
                 'uid': uid
-                },
-        beforeSend: function () {
-            /*$('#get_qr_code').attr("disabled", true);
-            $('#inputFile').attr("disabled", true);
-            $('#get_qr_code').html("Gerando Códgo...");*/
-        }
-    })
-    .done(function (data) {
-        //alert('enviado');
-        USER_UID = uid;
-        $('#lbl_login_info').html(USER_UID);
-        alert('Logado: ' + uid);
-        setTimeout(function () {
-            $('#loginModal').modal('hide');
-        }, 1000);
+            },
+            beforeSend: function () {
+                /*$('#get_qr_code').attr("disabled", true);
+                $('#inputFile').attr("disabled", true);
+                $('#get_qr_code').html("Gerando Códgo...");*/
+            }
+        })
+        .done(function (data) {
+            //alert('enviado');
+            IS_LOGGED = true;
+            $('#options_menu').append('<a class="dropdown-item" href="sair">SAIR</a>');
+            $('#login_popup').remove();
+            //alert('Logado!');
+            setTimeout(function () {
+                $('#loginModal').modal('hide');
+            }, 1000);
 
-    })
-    .fail(function (jqXHR, textStatus, msg) {
-        alert(msg);
-        $('#loginModal').modal('hide');
-    });
+        })
+        .fail(function (jqXHR, textStatus, msg) {
+            alert(msg);
+            $('#loginModal').modal('hide');
+        });
 }
 
-function create_user(){
+function create_user() {
     $.ajax({
-        url: "/api/user",
-        type: 'POST',
-        data: {
-            
-                },
-        beforeSend: function () {
-            $('#get_qr_code').attr("disabled", true);
-            $('#inputFile').attr("disabled", true);
-            $('#get_qr_code').html("Gerando Códgo...");
-        }
-    })
-    .done(function (data) {
-        //alert('enviado');
-        $('#get_qr_code').html("Pronto. Fazendo login...");
-        //console.log(data);
-        downloadBase64Png(data.ticket);
-        alert('Você será conhecido como: ' + data.user.name);
-        alert('Iniciando login para o código: ' + data.user.uid);
-        user_login(data.user.uid);
-        setTimeout(function () {
-            //$('#loginModal').modal('hide');
-        }, 1000);
+            url: "/api/user",
+            type: 'POST',
+            data: {
 
-    })
-    .fail(function (jqXHR, textStatus, msg) {
-        alert(msg);
-    });
+            },
+            beforeSend: function () {
+                $('#get_qr_code').attr("disabled", true);
+                $('#inputFile').attr("disabled", true);
+                $('#get_qr_code').html("Gerando Códgo...");
+            }
+        })
+        .done(function (data) {
+            //alert('enviado');
+            $('#get_qr_code').html("Pronto. Fazendo login...");
+            //console.log(data);
+            downloadBase64Png(data.ticket);
+            //alert('Você será conhecido como: ' + data.user.name);
+            //alert('Iniciando login para o código: ' + data.user.uid);
+            user_login(data.user.uid);
+            setTimeout(function () {
+                //$('#loginModal').modal('hide');
+            }, 1000);
+
+        })
+        .fail(function (jqXHR, textStatus, msg) {
+            alert(msg);
+        });
 }
 
 $("#get_qr_code").click(function () {
-   create_user();
+    create_user();
 });
 
 $('#loginModal').on('show.bs.modal', function (e) {
-    console.log("abriu modal");
+    //console.log("abriu modal");
     $('#get_qr_code').attr("disabled", false);
     $('#inputFile').attr("disabled", false);
     $('#get_qr_code').html("Não tenho código. É minha primeira vez aqui.");
@@ -537,7 +543,7 @@ $('#loginModal').on('show.bs.modal', function (e) {
 })
 
 $('#loginModal').on('hide.bs.modal', function (e) {
-    console.log("fechou modal");
+    //console.log("fechou modal");
     $('#get_qr_code').html("Não tenho código. É minha primeira vez aqui.");
     changePath('/');
 })
@@ -546,11 +552,11 @@ function publishControl() {
 
     var indexof = getPath().indexOf('/publish')
     if (indexof === 0) {
-        console.log('control abre publish');
+        //console.log('control abre publish');
         open_publish();
 
     } else {
-        console.log('control fecha publish');
+        //console.log('control fecha publish');
         close_publish();
 
     }
@@ -564,11 +570,11 @@ function coordinatesToPlace(lat, lon) {
         bairro = data.locality;
         cidade = data.city;
 
-        console.log("success place: " + bairro + ' - ' + cidade);
+        //console.log("success place: " + bairro + ' - ' + cidade);
         $("#location").html(bairro + " - " + cidade);
 
     }).fail(function () {
-        console.log('Erro ao obter bairro e cidade');
+        //console.log('Erro ao obter bairro e cidade');
     }).always(function () {
         $('#location_spinner').hide();
         $('#loc_loaded_div').show();
@@ -591,7 +597,7 @@ $('#send_publish').click(function () {
             $('input#lat').val(lat);
             $('input#lon').val(lon);
 
-            console.log(lat + " " + lon);
+            //console.log(lat + " " + lon);
 
             $("#location").html(lat + " " + lon);
 
@@ -616,20 +622,22 @@ $('#send_publish').click(function () {
 
 });
 
+window.onbeforeunload = function() {
+    return "Do you really want to leave our brilliant application?";
+ };
+
 $('#confirm_publish').click(function () {
-    user_uid = USER_UID;
     text = $("#publish_text").val();
     location_lat = $("input#lat").val();
     location_long = $("input#lon").val();
 
-    console.log(text + location_lat + location_long);
+    //console.log(text + location_lat + location_long);
 
 
     $.ajax({
-            url: "/api/post",
+            url: "/publish",
             type: 'POST',
             data: {
-                user_uid: user_uid,
                 text: text,
                 location_lat: location_lat,
                 location_long: location_long
@@ -650,6 +658,13 @@ $('#confirm_publish').click(function () {
 
         })
         .fail(function (jqXHR, textStatus, msg) {
-            alert(msg);
+            $('#publishModal').modal('hide');
+            changePath('/login');
+            loginControl();
         });
+});
+
+$('#btn_refresh').click(function(){
+    window.onbeforeunload = null;
+    window.location.reload();
 });

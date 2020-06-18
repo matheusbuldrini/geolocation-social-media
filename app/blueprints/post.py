@@ -15,6 +15,7 @@ def configure(app):
 
 @bp_app.route(PAGE, methods=["POST"])
 def create():
+    print(dict(request.form))
     user_uid = request.form.get('user_uid')
 
     user = User.query.filter(User.uid == user_uid).first()
