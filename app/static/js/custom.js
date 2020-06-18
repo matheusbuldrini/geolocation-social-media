@@ -622,9 +622,9 @@ $('#send_publish').click(function () {
 
 });
 
-window.onbeforeunload = function() {
+/*window.onbeforeunload = function() {
     return "Do you really want to leave our brilliant application?";
- };
+ };*/
 
 $('#confirm_publish').click(function () {
     text = $("#publish_text").val();
@@ -665,6 +665,6 @@ $('#confirm_publish').click(function () {
 });
 
 $('#btn_refresh').click(function(){
-    window.onbeforeunload = null;
+    //window.onbeforeunload = null;
     window.location.reload();
 });
