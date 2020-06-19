@@ -240,6 +240,7 @@ function press_back(mobile_only = false) {
     }
 
 }
+var opened_post_id = null;
 
 function open_post(post_id) {
     if (!$('.pop-div-post').is(':visible')) {
@@ -256,7 +257,7 @@ function open_post(post_id) {
 
             $('#post_text').html(data.text);
             $('#spinner_post_text').hide();
-
+            opened_post_id = post_id;
 
 
 
@@ -275,6 +276,7 @@ function close_post() {
         $('.pop-div-post').removeClass("opened");
         $('body').removeClass("msg-opened");
         changePath('/');
+        opened_post_id = null;
 
     }
 }
@@ -378,6 +380,7 @@ $(document).ready(function () {
     load_main_posts();
     loginControl();
 
+    get_chats();
 
 });
 
@@ -514,8 +517,8 @@ function user_login(uid) {
             $('#login_popup').remove();
             //alert('Logado!');
             $('#loginModal').modal('hide');
-            if($("#send_publish").is(":visible")){
-                $("#send_publish").trigger( "click" );
+            if ($("#send_publish").is(":visible")) {
+                $("#send_publish").trigger("click");
             }
 
         })
@@ -542,7 +545,7 @@ function create_user() {
             //alert('enviado');
             $('#get_qr_code').html("Pronto. Fazendo login...");
             //console.log(data);
-            user_login(data.user.uid);
+            user_login(data.uid);
             downloadBase64Png(data.ticket);
             //alert('Você será conhecido como: ' + data.user.name);
             //alert('Iniciando login para o código: ' + data.user.uid);
@@ -682,11 +685,11 @@ $('#confirm_publish').click(function () {
 
         })
         .fail(function (jqXHR, textStatus, msg) {
-            if(jqXHR.responseJSON.message == "login-error"){
+            if (jqXHR.responseJSON.message == "login-error") {
                 $('#publishModal').modal('hide');
                 changePath('/login');
                 loginControl();
-            }else{
+            } else {
                 alert('FAIL');
             }
 
@@ -696,4 +699,37 @@ $('#confirm_publish').click(function () {
 $('#btn_refresh').click(function () {
     //window.onbeforeunload = null;
     window.location.reload();
+});
+
+function get_chats() {
+
+    $.getJSON("/chat", function (data) {
+        console.log(data);
+        //callback_success(data.user_id);
+    }).fail(function () {
+        //callback_fail();
+    });
+
+}
+
+function get_user_id_by_post_id(post_id, callback_success, callback_fail) {
+    $.getJSON("/api/post/" + post_id, function (data) {
+        callback_success(data.user_id);
+    }).fail(function () {
+        callback_fail();
+    });
+}
+
+$('#btn_talk_to').click(function () {
+    $('#btn_talk_to').attr("disabled", true);
+    if (opened_post_id) {
+        get_user_id_by_post_id(opened_post_id, function success(user_id) {
+            show_msg();
+            open_chat(user_id);
+            $('#btn_talk_to').attr("disabled", false);
+        }, function fail() {
+            alert('fail');
+            $('#btn_talk_to').attr("disabled", false);
+        });
+    }
 });

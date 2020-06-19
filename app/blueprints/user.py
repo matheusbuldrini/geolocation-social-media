@@ -49,19 +49,26 @@ def create():
 
     img = get_ticket_png(uid)
 
-    return (jsonify({'user': user, 'ticket': img}), 201)
+    return (jsonify({'uid': uid, 'ticket': img}), 201)
 
 @bp_app.route(PAGE, methods=["GET"])
 def read():
     users = User.query.all()
     return (jsonify(users), 200)
 
+@bp_app.route(PAGE + "/<string:id>", methods=["GET"])
 @bp_app.route(PAGE + "/<int:id>", methods=["GET"])
 def read_id(id):
-    user = User.query.get(id)
+    if type(id) == 'str':
+        user = User.query.get(id)
+    else:
+        user = User.query.filter(User.uid == id).first()
     if not user:
         abort(404)
     return (jsonify(user), 200)
+
+
+
 
 @bp_app.route(PAGE + "/<int:id>", methods=["PUT"])
 def update(id):
